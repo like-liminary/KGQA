@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>知识图谱全景 - KGQA</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; overflow: hidden; background: #f0f2f5; }
+        #mynetwork { width: 100vw; height: 100vh; background: #ffffff; }
+        
+        .header {
+            position: absolute;
+            top: 20px; left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(5px);
+        }
+        .back-btn {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: #4f46e5; }
+        .legend {
+            position: absolute;
+            bottom: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; }
+        .color-dot { width: 12px; height: 12px; border-radius: 50%; }
+        
+        /* Loading Mask */
+        #loading {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); z-index: 20;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/chat" class="back-btn">← 返回对话</a>
+        <span style="color:#ddd">|</span>
+        <span style="font-weight:bold; color:#1f2937;">全域知识图谱</span>
+    </div>
+
+    <div id="loading">正在加载图谱数据...</div>
+    <div id="mynetwork"></div>
+    <div class="legend" id="legend"></div>
+
+    <script>
+        // 预置20种好看的莫兰迪/现代色系
+        const PRESET_COLORS = [
+            "#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de",
+            "#3ba272", "#fc8452", "#9a60b4", "#ea7ccc", "#2ec7c9",
+            "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3",
+            "#e5cf0d", "#97b552", "#95706d", "#dc69aa", "#07a2a4"
+        ];
+
+        let network = null;
+
+        async function initGraph() {
+            try {
+                const res = await fetch('/api/graph_data');
+                const data = await res.json();
+                
+                document.getElementById('loading').style.display = 'none';
+
+                // 1. 分配颜色
+                const groupColors = {};
+                let colorIdx = 0;
+                const legendContainer = document.getElementById('legend');
+                
+                data.nodes.forEach(node => {
+                    if (!groupColors[node.group]) {
+                        groupColors[node.group] = PRESET_COLORS[colorIdx % PRESET_COLORS.length];
+                        colorIdx++;
+                        
+                        // 添加图例
+                        const div = document.createElement('div');
+                        div.className = 'legend-item';
+                        div.innerHTML = `<div class="color-dot" style="background:${groupColors[node.group]}"></div><span>${node.group}</span>`;
+                        legendContainer.appendChild(div);
+                    }
+                });
+
+                // 2. 构建 vis 数据集
+                const nodes = new vis.DataSet(data.nodes.map(n => ({
+                    id: n.id,
+                    label: n.label,
+                    group: n.group,
+                    color: {
+                        background: groupColors[n.group],
+                        border: groupColors[n.group],
+                        highlight: { background: groupColors[n.group], border: '#000' }
+                    },
+                    font: { color: '#333', size: 14, face: 'Inter' }
+                })));
+
+                const edges = new vis.DataSet(data.edges.map(e => ({
+                    from: e.from,
+                    to: e.to,
+                    label: e.label,
+                    font: { align: 'middle', size: 10, color: '#888' },
+                    color: { color: '#e0e0e0', highlight: '#4f46e5' },
+                    arrows: 'to'
+                })));
+
+                // 3. 配置项
+                const options = {
+                    nodes: {
+                        shape: 'dot',
+                        size: 25,
+                        shadow: true
+                    },
+                    physics: {
+                        stabilization: false,
+                        barnesHut: {
+                            gravitationalConstant: -3000, // 排斥力
+                            springConstant: 0.04,
+                            springLength: 95
+                        }
+                    },
+                    interaction: {
+                        hover: true,
+                        tooltipDelay: 200,
+                        zoomView: true
+                    }
+                };
+
+                const container = document.getElementById('mynetwork');
+                network = new vis.Network(container, { nodes, edges }, options);
+                
+            } catch (e) {
+                document.getElementById('loading').innerHTML = "加载失败: " + e;
+            }
+        }
+
+        initGraph();
+    </script>
+</body>
+</html>

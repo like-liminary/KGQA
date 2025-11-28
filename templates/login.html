@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 智能问答助手</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --surface: #ffffff;
+            --text-main: #333;
+            --text-sub: #888;
+            --border: #e1e1e1;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            background-image: radial-gradient(#e4e9f2 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            width: 380px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-title {
+            font-weight: 600;
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .brand-sub {
+            color: var(--text-sub);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-box {
+            display: flex;
+            background: #f0f2f5;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
+            z-index: 2;
+            transition: color 0.3s;
+        }
+
+        .toggle-btn.active {
+            color: #333;
+        }
+
+        /* 滑块动画 */
+        .slider {
+            position: absolute;
+            width: 50%;
+            height: calc(100% - 8px);
+            background: white;
+            border-radius: 10px;
+            top: 4px;
+            left: 4px;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            z-index: 1;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .styled-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .styled-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .form-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <div class="brand-title">KGQA Assistant</div>
+        <div class="brand-sub">知识图谱智能问答系统</div>
+
+        <div class="toggle-box">
+            <div class="slider" id="slider"></div>
+            <button class="toggle-btn active" onclick="switchTab('login')">登录</button>
+            <button class="toggle-btn" onclick="switchTab('register')">注册</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="form-section active">
+            <div class="input-group">
+                <label>用户名</label>
+                <input type="text" id="l_user" class="styled-input" placeholder="请输入账号">
+            </div>
+            <div class="input-group">
+                <label>密码</label>
+                <input type="password" id="l_pass" class="styled-input" placeholder="••••••••">
+            </div>
+            <button onclick="doLogin()" class="action-btn">进入系统</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="form-section">
+            <div class="input-group">
+                <label>设置用户名</label>
+                <input type="text" id="r_user" class="styled-input" placeholder="新账号">
+            </div>
+            <div class="input-group">
+                <label>设置密码</label>
+                <input type="password" id="r_pass" class="styled-input" placeholder="新密码">
+            </div>
+            <button onclick="doRegister()" class="action-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">立即注册</button>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(type) {
+            const slider = document.getElementById('slider');
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            const btns = document.querySelectorAll('.toggle-btn');
+
+            if(type === 'login') {
+                slider.style.transform = 'translateX(0)';
+                loginForm.classList.add('active');
+                regForm.classList.remove('active');
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            } else {
+                slider.style.transform = 'translateX(100%)';
+                loginForm.classList.remove('active');
+                regForm.classList.add('active');
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+            }
+        }
+
+        async function doLogin() {
+            const u = document.getElementById('l_user').value;
+            const p = document.getElementById('l_pass').value;
+            if(!u || !p) return alert("请输入完整信息");
+            
+            const res = await fetch('/login', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u, password: p})
+            });
+            const data = await res.json();
+            if(data.status === 'success') window.location.href = '/chat';
+            else alert(data.msg);
+        }
+
+        async function doRegister() {
+            const u = document.getElementById('r_user').value;
+            const p = document.getElementById('r_pass').value;
+            if(!u || !p) return alert("请输入完整信息");
+
+            const res = await fetch('/register', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u, password: p})
+            });
+            const data = await res.json();
+            alert(data.msg);
+            if(data.status === 'success') switchTab('login');
+        }
+    </script>
+</body>
+</html>

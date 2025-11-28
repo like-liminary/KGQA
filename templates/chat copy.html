@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>KGQA Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="new-chat-btn" onclick="startNewChat()">
+            <i class="fas fa-plus"></i> 新建对话
+        </div>
+        <div class="history-list" id="historyList">
+            <!-- JS 渲染历史记录 -->
+        </div>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i> {{ username }}
+            <a href="/logout" style="float:right; color:#aaa;"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="main-content">
+        <div class="chat-container" id="chatContainer">
+            <!-- Welcome Message -->
+            <div class="message bot">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <div class="text">你好！我是基于知识图谱的智能助手，请问有什么关于设备故障的问题吗？</div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <div class="controls-bar">
+                <label class="switch-container">
+                    <input type="checkbox" id="contextSwitch" checked>
+                    <span class="slider"></span>
+                    <span class="label-text">启用历史上下文</span>
+                </label>
+            </div>
+            
+            <div class="input-box">
+                <textarea id="userJsonInput" placeholder="输入您的问题..." rows="1"></textarea>
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

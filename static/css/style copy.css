@@ -1,0 +1,198 @@
+:root {
+    --bg-color: #ffffff;
+    --sidebar-bg: #f0f4f9;
+    --text-color: #1f1f1f;
+    --input-bg: #f0f4f9;
+    --primary: #0b57d0;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 10px;
+    border-right: 1px solid #e0e0e0;
+}
+
+.new-chat-btn {
+    background: #dde3ea;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #444746;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.new-chat-btn:hover { background: #cdd5df; }
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #444746;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+.history-item:hover { background: #e0e4e9; }
+.history-item.active { background: #c2e7ff; color: #001d35; }
+.del-chat { position: absolute; right: 10px; display: none; color: #888; }
+.history-item:hover .del-chat { display: block; }
+
+.user-info { padding-top: 10px; border-top: 1px solid #ccc; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-color);
+    position: relative;
+}
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 15% 100px 15%; /* Bottom padding for input area */
+}
+
+.message {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.message.user { flex-direction: row-reverse; }
+.message .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+}
+.message.bot .avatar { background: linear-gradient(135deg, #4285f4, #d96570); color: white; }
+.message.user .avatar { background: #ddd; color: #555; }
+
+.message .text {
+    max-width: 80%;
+    padding: 0 10px;
+}
+.message.user .text { background: #f0f4f9; padding: 10px 15px; border-radius: 15px 15px 0 15px; }
+
+/* Input Area */
+.input-area {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px 15%;
+    box-sizing: border-box;
+    background: linear-gradient(transparent, white 20%);
+}
+
+.input-box {
+    background: var(--input-bg);
+    border-radius: 30px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+textarea {
+    flex: 1;
+    border: none;
+    background: transparent;
+    resize: none;
+    outline: none;
+    font-size: 16px;
+    max-height: 150px;
+    font-family: inherit;
+}
+
+button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 10px;
+}
+button:hover { color: #0842a0; }
+
+/* 新增样式 */
+.controls-bar {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-end; /* 靠右显示 */
+    padding-right: 10px;
+}
+
+/* 开关组件样式 */
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    user-select: none;
+}
+
+.switch-container input {
+    display: none;
+}
+
+.slider {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #0b57d0; /* 主题色 */
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+.label-text {
+    font-weight: 500;
+}

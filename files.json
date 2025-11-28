@@ -1,0 +1,20 @@
+[
+    {
+        "id": "e17b94c9-6158-4db6-9ba2-06de284f74a5",
+        "name": "配电网.txt",
+        "status": "done",
+        "path": "uploads\\e17b94c9-6158-4db6-9ba2-06de284f74a5.txt"
+    },
+    {
+        "id": "470069ed-6c92-414e-abf8-88c5e9545dca",
+        "name": "gjdl.pdf",
+        "status": "done",
+        "path": "uploads\\470069ed-6c92-414e-abf8-88c5e9545dca.pdf"
+    },
+    {
+        "id": "43c3091e-45b7-4c41-8cb2-52bd9b3f6b63",
+        "name": "故障维修.docx",
+        "status": "done",
+        "path": "uploads\\43c3091e-45b7-4c41-8cb2-52bd9b3f6b63.docx"
+    }
+]
